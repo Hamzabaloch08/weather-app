@@ -45,23 +45,21 @@ export const WeatherProvider = ({ children }) => {
     }
   };
 
-
   useEffect(() => {
     if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        getWeatherByLocation(latitude, longitude); // ✅ Location allowed
-      },
-      (error) => {
-        console.log("Location access denied. Loading Karachi as fallback.");
-        fetchWeather("karachi");
-      }
-    );
-  } else {
-    fetchWeather("karachi");
-  }
-
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          getWeatherByLocation(latitude, longitude);
+        },
+        (error) => {
+          console.log("Location access denied. Loading Karachi as fallback.");
+          fetchWeather("karachi");
+        }
+      );
+    } else {
+      fetchWeather("karachi");
+    }
   }, []);
 
   return (

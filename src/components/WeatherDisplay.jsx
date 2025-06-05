@@ -9,7 +9,7 @@ function WeatherDisplay() {
   const current = weatherData?.list?.[0];
 
   const handleSearch = () => {
-     fetchWeather(searchValue.trim());
+    fetchWeather(searchValue.trim());
   };
 
   const handleKeyDown = (e) => {
@@ -19,7 +19,6 @@ function WeatherDisplay() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364] px-3 py-5">
       <div className="w-full max-w-sm bg-black/30 backdrop-blur-2xl rounded-3xl shadow-xl p-5 space-y-4 transition-all duration-300 ease-in-out">
-
         {/* Search Input + Button */}
         <div className="flex w-full gap-2">
           <div className="relative flex-1">
@@ -34,7 +33,7 @@ function WeatherDisplay() {
             <FiSearch
               className="absolute left-3 top-1/2 -translate-y-1/2 text-white cursor-pointer"
               size={18}
-              onClick={()=> handleSearch()}
+              onClick={() => handleSearch()}
             />
           </div>
 
@@ -49,46 +48,52 @@ function WeatherDisplay() {
         {/* Error Message */}
         {error && <p className="text-red-400 text-xs text-center">{error}</p>}
 
+        <>
+          {/* Current Weather */}
+          {current && (
+            <div className="text-center text-white space-y-1">
+              <h1 className="text-6xl font-light leading-none">
+                {Math.floor(current.main.temp)}
+                <sup className="text-3xl">°</sup>
+              </h1>
+              <p className="capitalize text-xs">
+                {current.weather?.[0]?.description}
+              </p>
+            </div>
+          )}
 
-          <>
-            {/* Current Weather */}
-            {current && (
-              <div className="text-center text-white space-y-1">
-                <h1 className="text-6xl font-light leading-none">
-                  {Math.floor(current.main.temp)}<sup className="text-3xl">°</sup>
-                </h1>
-                <p className="capitalize text-xs">{current.weather?.[0]?.description}</p>
-              </div>
-            )}
+          {/* Hourly Forecast */}
+          <div className="overflow-x-auto scrollbar-hide flex gap-3 bg-white/5 backdrop-blur-xl p-3 rounded-2xl">
+            {weatherData?.list?.slice(0, 8).map((item, index) => (
+              <Card
+                key={index}
+                time={
+                  index === 0
+                    ? "Now"
+                    : new Date(item.dt * 1000).getHours() + ":00"
+                }
+                temp={Math.floor(item.main.temp)}
+                icon={item.weather[0].icon}
+              />
+            ))}
+          </div>
 
-            {/* Hourly Forecast */}
-            <div className="overflow-x-auto scrollbar-hide flex gap-3 bg-white/5 backdrop-blur-xl p-3 rounded-2xl">
-              {weatherData?.list?.slice(0, 8).map((item, index) => (
+          {/* Daily Forecast */}
+          <div className="grid grid-cols-2 gap-4 place-items-center bg-white/5 backdrop-blur-xl p-4 rounded-2xl max-h-[200px] overflow-y-auto scrollbar-hide">
+            {[8, 16, 24, 32].map((i, idx) => {
+              const item = weatherData?.list?.[i];
+              const date = new Date(item?.dt * 1000);
+              return (
                 <Card
-                  key={index}
-                  time={index === 0 ? "Now" : new Date(item.dt * 1000).getHours() + ":00"}
-                  temp={Math.floor(item.main.temp)}
-                  icon={item.weather[0].icon}
+                  key={idx}
+                  time={date.toLocaleDateString("en-US", { weekday: "short" })}
+                  temp={Math.floor(item?.main?.temp)}
+                  icon={item?.weather?.[0]?.icon}
                 />
-              ))}
-            </div>
-
-            {/* Daily Forecast */}
-            <div className="grid grid-cols-2 gap-4 place-items-center bg-white/5 backdrop-blur-xl p-4 rounded-2xl max-h-[200px] overflow-y-auto scrollbar-hide">
-              {[8, 16, 24, 32].map((i, idx) => {
-                const item = weatherData?.list?.[i];
-                const date = new Date(item?.dt * 1000);
-                return (
-                  <Card
-                    key={idx}
-                    time={date.toLocaleDateString("en-US", { weekday: "short" })}
-                    temp={Math.floor(item?.main?.temp)}
-                    icon={item?.weather?.[0]?.icon}
-                  />
-                );
-              })}
-            </div>
-          </>
+              );
+            })}
+          </div>
+        </>
       </div>
     </div>
   );
