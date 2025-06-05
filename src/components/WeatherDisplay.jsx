@@ -1,15 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState,} from "react";
 import { useWeather } from "../context/weatherContext";
 import Card from "./Card";
 import { FiSearch } from "react-icons/fi";
 
 function WeatherDisplay() {
   const { weatherData, fetchWeather, error } = useWeather();
-  const [searchValue, setSearchValue] = useState("karachi");
+  const [searchValue, setSearchValue] = useState("")
   const current = weatherData?.list?.[0];
+
+    useEffect(() => {
+    if (weatherData?.city?.name) {
+      setSearchValue(weatherData.city.name);
+    }
+  }, [weatherData]);
 
   const handleSearch = () => {
     fetchWeather(searchValue.trim());
+    setSearchValue( weatherData?.city?.name)
+    
   };
 
   const handleKeyDown = (e) => {

@@ -54,7 +54,7 @@ export const WeatherProvider = ({ children }) => {
         },
         (error) => {
           console.log("Location access denied. Loading Karachi as fallback.");
-          fetchWeather("karachi");
+          fetchWeather("karachi")
         }
       );
     } else {
